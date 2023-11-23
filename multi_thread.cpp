@@ -55,22 +55,14 @@ void process_calculation()
 
 void calc_central_nodes(std::vector<std::vector<double>> &T, std::vector<std::vector<double>> &Tn)
 {
-    size_t i = 1;
-
-    omp_set_num_threads(4);
-    #pragma omp parallel private(i)
+    #pragma omp parallel for 
+    for (size_t i = 1; i < height - 1; i++)
     {
-        #pragma omp for 
-        for (i = 1; i < height - 1; i++)
+        for (size_t j = 1; j < width - 1; j++)
         {
-            for (size_t j = 1; j < width - 1; j++)
-            {
-                // Differential equation for central nodes
-                Tn[i][j] = a * dt * ((T[i][j+1] - 2 * T[i][j] + T[i][j-1]) / (dx*dx) + (T[i+1][j] - 2 * T[i][j] + T[i-1][j]) / (dy*dy)) + T[i][j];
-            }
+            // Differential equation for central nodes
+            Tn[i][j] = a * dt * ((T[i][j+1] - 2 * T[i][j] + T[i][j-1]) / (dx*dx) + (T[i+1][j] - 2 * T[i][j] + T[i-1][j]) / (dy*dy)) + T[i][j];
         }
-
-        #pragma omp barrier
     }
 }
 
